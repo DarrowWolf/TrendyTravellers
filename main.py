@@ -4,8 +4,10 @@ year_choice = 0
 region_choice = 0
 
 class VistorsAnalyticsUtils:
+    data = pd.read_csv('Int_Monthly_Visitor.csv') # Made data global variable within the class
+    
     def loadDataFile(self):
-        data = pd.read_csv('Int_Monthly_Visitor.csv')
+        data = self.data
         return data
 
 
