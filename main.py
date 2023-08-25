@@ -65,19 +65,12 @@ class VisitorsAnalyticsUtils:
         
         return data
 
-    def getTop3Countries(self, parsed_data, year_choice, region_choice):
-        selected_region = VisitorsAnalyticsUtils.regions[region_choice]
-
-        print("\nTop 3 countries")
-
-        # Create a new column for the sum of values across the selected region for each row
-        parsed_data['Sum'] = parsed_data[selected_region].sum(axis=1)
-
-        # Get the top 3 countries based on the sum column
-        top_countries = parsed_data.nlargest(3, 'Sum')
-
-        for index, row in top_countries.iterrows():
-            print("\nCountry:",row['Sum'])
+    def getTop3Countries(self, data):
+        top_countries = data.drop(columns=['year']).sum().sort_values(ascending=False).head(3)
+        
+        print("\n*** Top 3 Countries ***")
+        print(top_countries)
+        return top_countries
 
 def main():
     year_choice = 0
@@ -100,7 +93,8 @@ def main():
     # Made it easier to read this way
     utils = VisitorsAnalyticsUtils()
     parsed_data = utils.parseData(year_choice, region_choice)
-    utils.getTop3Countries(parsed_data, year_choice, region_choice)
+    utils.getTop3Countries(parsed_data)
+
     
 if __name__ == '__main__':
     main()
