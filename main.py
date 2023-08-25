@@ -1,6 +1,17 @@
 import pandas as pd
 
 class VisitorsAnalyticsUtils:
+    regions = {
+            1: ['Brunei Darussalam', 'Indonesia', 'Malaysia', 'Philippines', 'Thailand', 
+                'Viet Nam', 'Myanmar', 'Japan', 'Hong Kong', 'China', 'Taiwan', 
+                'Korea, Republic Of', 'India', 'Pakistan', 'Sri Lanka', 'Saudi Arabia', 
+                'Kuwait', 'UAE'],
+            2: ['United Kingdom', 'Germany', 'France', 'Italy', 'Netherlands', 
+                'Greece', 'Belgium & Luxembourg', 'Switzerland', 'Austria', 'Scandinavia', 
+                'CIS & Eastern Europe'],
+            3: ['USA', 'Canada', 'Australia', 'New Zealand', 'Africa']
+        }
+    
     def loadDataFile(self):
         data = pd.read_csv('Int_Monthly_Visitor.csv', na_values=[' na ']) #Opens csv file and declare ' na ' under na_value
         
@@ -24,22 +35,10 @@ class VisitorsAnalyticsUtils:
         
         return data
         
-        
     def parseData(self, year_choice, region_choice):
         data = self.loadDataFile()
         
-        regions = {
-            1: ['Brunei Darussalam', 'Indonesia', 'Malaysia', 'Philippines', 'Thailand', 
-                'Viet Nam', 'Myanmar', 'Japan', 'Hong Kong', 'China', 'Taiwan', 
-                'Korea, Republic Of', 'India', 'Pakistan', 'Sri Lanka', 'Saudi Arabia', 
-                'Kuwait', 'UAE'],
-            2: ['United Kingdom', 'Germany', 'France', 'Italy', 'Netherlands', 
-                'Greece', 'Belgium & Luxembourg', 'Switzerland', 'Austria', 'Scandinavia', 
-                'CIS & Eastern Europe'],
-            3: ['USA', 'Canada', 'Australia', 'New Zealand', 'Africa']
-        }
-        
-        selected_region = regions[region_choice]
+        selected_region = VisitorsAnalyticsUtils.regions[region_choice]
         
         periods = {
             1: (1978, 1987),
@@ -67,17 +66,7 @@ class VisitorsAnalyticsUtils:
         return data
 
     def getTop3Countries(self, parsed_data, year_choice, region_choice):
-        regions = {
-            1: ['Brunei Darussalam', 'Indonesia', 'Malaysia', 'Philippines', 'Thailand', 
-                'Viet Nam', 'Myanmar', 'Japan', 'Hong Kong', 'China', 'Taiwan', 
-                'Korea, Republic Of', 'India', 'Pakistan', 'Sri Lanka', 'Saudi Arabia', 
-                'Kuwait', 'UAE'],
-            2: ['United Kingdom', 'Germany', 'France', 'Italy', 'Netherlands', 
-                'Greece', 'Belgium & Luxembourg', 'Switzerland', 'Austria', 'Scandinavia', 
-                'CIS & Eastern Europe'],
-            3: ['USA', 'Canada', 'Australia', 'New Zealand', 'Africa']
-        }
-        selected_region = regions[region_choice]
+        selected_region = VisitorsAnalyticsUtils.regions[region_choice]
 
         print("\nTop 3 countries")
 
@@ -89,6 +78,7 @@ class VisitorsAnalyticsUtils:
 
         for index, row in top_countries.iterrows():
             print("\nCountry:",row['Sum'])
+
 def main():
     year_choice = 0
     region_choice = 0
@@ -107,12 +97,11 @@ def main():
             print(ve)
             continue
 
-
-
     # Made it easier to read this way
     utils = VisitorsAnalyticsUtils()
     parsed_data = utils.parseData(year_choice, region_choice)
     utils.getTop3Countries(parsed_data, year_choice, region_choice)
+    
 if __name__ == '__main__':
     main()
 
