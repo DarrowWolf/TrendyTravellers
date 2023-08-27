@@ -12,7 +12,7 @@ class VisitorsAnalyticsUtils:
             3: ['USA', 'Canada', 'Australia', 'New Zealand', 'Africa']
         }
     
-    def loadDataFile(self):
+    def loadDataFile(self, file_path='Int_Monthly_Visitor.csv', print_data=True): # added file path and print_data for unit test
         data = pd.read_csv('Int_Monthly_Visitor.csv', na_values=[' na ']) # Opens csv file and declare ' na ' under na_value
         
         data.columns = [col.strip() for col in data.columns]  # Changes all object dtypes to float
