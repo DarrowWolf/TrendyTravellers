@@ -39,7 +39,7 @@ class GUIApp:
         self.canvas.get_tk_widget().pack()
         self.canvas.get_tk_widget().pack_forget()  # Hide the canvas initially
 
-        self.output_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, width=180, height=30)
+        self.output_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, width=180, height=30, state=tk.DISABLED)
         self.output_text.pack()
 
     def execute_program(self):
@@ -53,14 +53,20 @@ class GUIApp:
             parsed_data = self.utils.parseData(year_mapping[year_choice], region_mapping[region_choice])
 
             # Clear the scrolled text widget and insert the captured output
+            self.output_text.config(state=tk.NORMAL)
             self.output_text.delete(1.0, tk.END)  # Clear the existing content
             self.output_text.insert(tk.END, parsed_data)
+            self.output_text.config(state=tk.DISABLED)
+
 
             top_three_countries_checked = self.top_three_countries_checked.get()
             if top_three_countries_checked == 1:
+                self.output_text.config(state=tk.NORMAL)
                 output = self.utils.getTop3Countries(parsed_data)
                 self.output_text.insert(tk.END, '\n\n*** Top 3 Countries ***\n')
                 self.output_text.insert(tk.END, output)
+                self.output_text.config(state=tk.DISABLED)
+
             
 
     def visualize_data(self, parsed_data=None):
@@ -86,14 +92,14 @@ class GUIApp:
                 plt.close(self.fig)  # Close the previous figure to avoid overlapping
             self.fig = plt.figure(figsize=(12, 6))  # Set the size of the plot
             ax = transposed_data.plot(kind='bar', stacked=True, ax=self.fig.gca())
-            plt.xlabel("Year")  # X-axis label
+            plt.xlabel("Countries")  # X-axis label
             plt.ylabel("Number of Visitors")  # Y-axis label
             plt.title(f"Visitor Trends by Country in the Selected Region")  # Title of the chart
             plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
             plt.tight_layout()  # Adjust layout for better spacing
 
             # Place the legend outside the plot area to the right
-            ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+            ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title = 'Years')
 
             plt.tight_layout()  # Adjust layout for better spacing
 
