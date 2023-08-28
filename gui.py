@@ -37,7 +37,7 @@ class GUIApp:
         # Create a placeholder for the Matplotlib figure
         self.canvas = FigureCanvasTkAgg(plt.figure(), master=self.root)
         self.canvas.get_tk_widget().pack()
-        self.canvas.get_tk_widget().pack_forget()  # Hide the canvas initially
+        self.canvas.get_tk_widget().pack_forget()  # Hide the canvas initially until called and drawn
 
         self.output_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, width=180, height=30, state=tk.DISABLED)
         self.output_text.pack()
@@ -53,10 +53,10 @@ class GUIApp:
             parsed_data = self.utils.parseData(year_mapping[year_choice], region_mapping[region_choice])
 
             # Clear the scrolled text widget and insert the captured output
-            self.output_text.config(state=tk.NORMAL)
+            self.output_text.config(state=tk.NORMAL) # tk.NORMAL allows users to type into the text box, also need to set it to NORMAL or else it won't insert.
             self.output_text.delete(1.0, tk.END)  # Clear the existing content
             self.output_text.insert(tk.END, parsed_data)
-            self.output_text.config(state=tk.DISABLED)
+            self.output_text.config(state=tk.DISABLED) # tk.DISABLE doesn't allow users to type into text box. .insert won't work if set to disable
 
 
             top_three_countries_checked = self.top_three_countries_checked.get()
@@ -66,6 +66,7 @@ class GUIApp:
                 self.output_text.insert(tk.END, '\n\n*** Top 3 Countries ***\n')
                 self.output_text.insert(tk.END, output)
                 self.output_text.config(state=tk.DISABLED)
+
 
             
 
@@ -92,23 +93,21 @@ class GUIApp:
                 plt.close(self.fig)  # Close the previous figure to avoid overlapping
             self.fig = plt.figure(figsize=(12, 6))  # Set the size of the plot
             ax = transposed_data.plot(kind='bar', stacked=True, ax=self.fig.gca())
-            plt.xlabel("Countries")  # X-axis label
-            plt.ylabel("Number of Visitors")  # Y-axis label
-            plt.title(f"Visitor Trends by Country in the Selected Region")  # Title of the chart
+            plt.xlabel("Countries")
+            plt.ylabel("Number of Visitors")
+            plt.title(f"Visitor Trends by Country in the Selected Region")
             plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-            plt.tight_layout()  # Adjust layout for better spacing
+            plt.tight_layout()
 
-            # Place the legend outside the plot area to the right
+            # place the year legend outside the plot area to the right
             ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title = 'Years')
 
-            plt.tight_layout()  # Adjust layout for better spacing
-
-            # Update the Matplotlib figure on the canvas
-            self.canvas.get_tk_widget().pack_forget()  # Hide the previous canvas
+            # update the graph figure on the canvas
+            self.canvas.get_tk_widget().pack_forget()  # hide the previous canvas
             self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
-            self.canvas.get_tk_widget().pack()  # Show the new canvas
+            self.canvas.get_tk_widget().pack()  # show the new canvas
         else:
-            # Handle the case when parsed_data is not available
+            # error handling if parsed_data is not available
             print("Error: No data available for visualization.")
 
 if __name__ == '__main__':
