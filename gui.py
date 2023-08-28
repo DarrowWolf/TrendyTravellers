@@ -12,6 +12,7 @@ class GUIApp:
         self.create_widgets()
         self.utils = VisitorsAnalyticsUtils()
         self.fig = None
+        self.root.protocol("WM_DELETE_WINDOW", self._quit)
 
     def create_widgets(self):
         year_label = tk.Label(self.root, text="Select Year Period:")
@@ -39,7 +40,7 @@ class GUIApp:
         self.canvas.get_tk_widget().pack()
         self.canvas.get_tk_widget().pack_forget()  # Hide the canvas initially until called and drawn
 
-        self.output_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, width=180, height=30, state=tk.DISABLED)
+        self.output_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, width=180, height=40, state=tk.DISABLED)
         self.output_text.pack()
 
     def execute_program(self):
@@ -97,10 +98,10 @@ class GUIApp:
             plt.ylabel("Number of Visitors")
             plt.title(f"Visitor Trends by Country in the Selected Region")
             plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-            plt.tight_layout()
 
             # place the year legend outside the plot area to the right
             ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title = 'Years')
+            plt.tight_layout()
 
             # update the graph figure on the canvas
             self.canvas.get_tk_widget().pack_forget()  # hide the previous canvas
@@ -110,7 +111,12 @@ class GUIApp:
             # error handling if parsed_data is not available
             print("Error: No data available for visualization.")
 
+    def _quit(self):
+        self.root.quit()
+        self.root.destroy()
+
 if __name__ == '__main__':
     root = tk.Tk()
     app = GUIApp(root)
     root.mainloop()
+    
