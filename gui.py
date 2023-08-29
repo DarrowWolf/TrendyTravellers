@@ -13,7 +13,11 @@ class GUIApp:
         self.utils = VisitorsAnalyticsUtils()
         self.fig = None
         self.root.protocol("WM_DELETE_WINDOW", self._quit)
-
+    
+    def visualize_data_and_execute(self):
+        self.visualize_data()
+        self.execute_program()
+        
     def create_widgets(self):
         year_label = tk.Label(self.root, text="Select Year Period:")
         year_label.pack()
@@ -32,7 +36,7 @@ class GUIApp:
         execute_button = tk.Button(self.root, text="Execute", command=self.execute_program)
         execute_button.pack()
 
-        visualize_button = tk.Button(self.root, text="Visualize Data", command=self.visualize_data)
+        visualize_button = tk.Button(self.root, text="Visualize Data", command=self.visualize_data_and_execute)
         visualize_button.pack()
 
         # Create a placeholder for the Matplotlib figure
