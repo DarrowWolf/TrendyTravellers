@@ -68,4 +68,4 @@ Contributions are welcome! To contribute to this project, follow these steps:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/DarrowWolf/TrendyTravellers/blob/main/LICENSE) file for details.
