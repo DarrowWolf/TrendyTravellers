@@ -1,6 +1,7 @@
 import pandas as pd
 
 class VisitorsAnalyticsUtils:
+    # dictionary of regions
     regions = {
             1: ['Brunei Darussalam', 'Indonesia', 'Malaysia', 'Philippines', 'Thailand', 
                 'Viet Nam', 'Myanmar', 'Japan', 'Hong Kong', 'China', 'Taiwan', 
@@ -15,7 +16,9 @@ class VisitorsAnalyticsUtils:
     def loadDataFile(self, file_path='Int_Monthly_Visitor.csv', print_data=True): # added file path and print_data for unit test
         data = pd.read_csv('Int_Monthly_Visitor.csv', na_values=[' na ']) # Opens csv file and declare ' na ' under na_value
         
-        data.columns = [col.strip() for col in data.columns]  # Changes all object dtypes to float
+        # strip() removes spaces at the start and end of the string
+        data.columns = [col.strip() for col in data.columns]
+        # replace() replaces the ',' with nothing and converts it to float
         for col in data.columns[1:]:
             if data[col].dtype == "object":
                 data[col] = data[col].str.strip().str.replace(',', '').astype(float)
@@ -41,6 +44,7 @@ class VisitorsAnalyticsUtils:
         
         selected_region = VisitorsAnalyticsUtils.regions[region_choice]
         
+        # dictionary of year periods
         periods = {
             1: (1978, 1987),
             2: (1988, 1997),
@@ -52,7 +56,6 @@ class VisitorsAnalyticsUtils:
         start_year, end_year = periods[year_choice]
         
         data['year'] = data.index.to_series().apply(lambda x: int(x.split()[0])) #exract year from first column
-        
         data = data[(data['year'] >= start_year) & (data['year'] <= end_year)]
         data = data[selected_region + ['year']]
         
@@ -92,7 +95,7 @@ if __name__ == '__main__':
             print(ve) # accuratly prints the error
             continue
 
-    utils = VisitorsAnalyticsUtils()
-    parsed_data = utils.parseData(year_choice, region_choice)
-    utils.getTop3Countries(parsed_data)
+    utils = VisitorsAnalyticsUtils() # creates an instance of the class
+    parsed_data = utils.parseData(year_choice, region_choice) # calls the parseData function and passes year_choice and region_choice as parameters
+    utils.getTop3Countries(parsed_data) # calls the getTop3Countries function and passes parsed_data as a parameter
 

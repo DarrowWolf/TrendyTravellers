@@ -74,9 +74,9 @@ class GUIApp:
             self.output_text.insert(tk.END, parsed_data)
             self.output_text.config(state=tk.DISABLED) # tk.DISABLE doesn't allow users to type into text box. .insert won't work if set to disable
 
-
+            # Get top 3 countries if the checkbox is checked
             top_three_countries_checked = self.top_three_countries_checked.get()
-            if top_three_countries_checked == 1:
+            if top_three_countries_checked == 1: # if the checkbox is checked, it will go to this line
                 self.output_text.config(state=tk.NORMAL)
                 output = self.utils.getTop3Countries(parsed_data)
                 self.output_text.insert(tk.END, '\n\n*** Top 3 Countries ***\n')
@@ -128,9 +128,10 @@ class GUIApp:
             print("Error: No data available for visualization.")
 
     def export_graph(self):
-        # check if figure is available
+        # check if figure is available to export
+        # if available, it opens a file dialog to save the graph
         if self.fig is not None:
-            file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG Files", "*.png"), ("All Files", "*.*")])
+            file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG Files", "*.png"), ("All Files", "*.*")]) 
             
             if file_path:
                 self.fig.savefig(file_path)
