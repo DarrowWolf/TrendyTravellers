@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import scrolledtext
+from tkinter import filedialog
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from main import VisitorsAnalyticsUtils
@@ -14,6 +15,7 @@ class GUIApp:
         self.fig = None
         self.root.protocol("WM_DELETE_WINDOW", self._quit)
     
+    # This function is called when the user clicks the "Visualize Data" button to visualize the data and execute the program
     def visualize_data_and_execute(self):
         self.visualize_data()
         self.execute_program()
@@ -39,6 +41,9 @@ class GUIApp:
         visualize_button = tk.Button(self.root, text="Visualize Data", command=self.visualize_data_and_execute)
         visualize_button.pack()
 
+        export_graph_button = tk.Button(self.root, text="Download graph", command=self.export_graph)
+        export_graph_button.pack()
+
         # Create a placeholder for the Matplotlib figure
         self.canvas = FigureCanvasTkAgg(plt.figure(), master=self.root)
         self.canvas.get_tk_widget().pack()
@@ -50,6 +55,12 @@ class GUIApp:
     def execute_program(self):
         year_choice = self.year_combobox.get()
         region_choice = self.region_combobox.get()
+
+        # checks if year_choice and region_choice is not empty
+        if self.year_combobox.get() == "" or self.region_combobox.get() == "":
+            tk.messagebox.showerror(title='Error', message='Please select a year period and region!')
+            print("Error: Please select a year period and region!")
+            return
 
         if year_choice and region_choice:
             # Take the output of the analysis in a variable
@@ -113,7 +124,19 @@ class GUIApp:
             self.canvas.get_tk_widget().pack()  # show the new canvas
         else:
             # error handling if parsed_data is not available
+            tk.messagebox.showerror(title='Error', message='No data available for visualization.')
             print("Error: No data available for visualization.")
+
+    def export_graph(self):
+        # check if figure is available
+        if self.fig is not None:
+            file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG Files", "*.png"), ("All Files", "*.*")])
+            
+            if file_path:
+                self.fig.savefig(file_path)
+        else:
+            tk.messagebox.showerror(title='Error', message='No graph available to export.')
+            print("Error: No graph available to export.")
 
     def _quit(self):
         self.root.quit()
@@ -123,4 +146,3 @@ if __name__ == '__main__':
     root = tk.Tk()
     app = GUIApp(root)
     root.mainloop()
-    
