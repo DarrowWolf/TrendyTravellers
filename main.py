@@ -1,6 +1,6 @@
 import pandas as pd
 
-class VisitorsAnalyticsUtils:
+class DataLoader:
     # dictionary of regions
     regions = {
             1: ['Brunei Darussalam', 'Indonesia', 'Malaysia', 'Philippines', 'Thailand', 
@@ -12,7 +12,7 @@ class VisitorsAnalyticsUtils:
                 'CIS & Eastern Europe'],
             3: ['USA', 'Canada', 'Australia', 'New Zealand', 'Africa']
         }
-    
+
     def loadDataFile(self, file_path='Int_Monthly_Visitor.csv', print_data=True): # added file path and print_data for unit test
         data = pd.read_csv('Int_Monthly_Visitor.csv', na_values=[' na ']) # Opens csv file and declare ' na ' under na_value
         
@@ -42,7 +42,7 @@ class VisitorsAnalyticsUtils:
     def parseData(self, year_choice, region_choice):
         data = self.loadDataFile()
         
-        selected_region = VisitorsAnalyticsUtils.regions[region_choice]
+        selected_region = DataLoader.regions[region_choice]
         
         # dictionary of year periods
         periods = {
@@ -70,6 +70,8 @@ class VisitorsAnalyticsUtils:
         
         return data
 
+class VisitorsAnalyticsUtils:
+    
     def getTop3Countries(self, data):
         # drop the 'year' column, sum each column, sort the values in descending order,
         # and select the top 3 countries
@@ -95,7 +97,8 @@ if __name__ == '__main__':
             print(ve) # accuratly prints the error
             continue
 
+    data_loader = DataLoader()
     utils = VisitorsAnalyticsUtils() # creates an instance of the class
-    parsed_data = utils.parseData(year_choice, region_choice) # calls the parseData function and passes year_choice and region_choice as parameters
+    parsed_data = data_loader.parseData(year_choice, region_choice) # calls the parseData function and passes year_choice and region_choice as parameters
     utils.getTop3Countries(parsed_data) # calls the getTop3Countries function and passes parsed_data as a parameter
 
