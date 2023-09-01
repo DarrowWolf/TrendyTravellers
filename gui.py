@@ -24,7 +24,10 @@ def generate_report(data):
     pdf.set_font('Arial', '', 12)
 
     # add the data to the PDF
-    pdf.cell(0, 10, 'Top 3 Countries:', 0, 1)
+    region_choice = app.region_combobox.get()# get user selected region
+    pdf.cell(0, 10, f'Region of vistors: {region_choice}', 0, 1)
+
+    pdf.cell(0, 10, 'Number of visitors from top 3 countries within region:', 0, 1)
     for country, visitors in data.items():
         pdf.cell(0, 10, f'{country}: {visitors}', 0, 1)
 
