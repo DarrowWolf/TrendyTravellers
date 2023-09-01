@@ -45,6 +45,10 @@ class GUIApp:
         generate_report_button = tk.Button(self.root, text="Generate Report", command=self.generate_report)
         generate_report_button.pack()
 
+        help_button = tk.Button(self.root, text="Help", command=self.show_help)
+        help_button.pack()
+
+
         # Create a placeholder for the Matplotlib figure
         self.canvas = FigureCanvasTkAgg(plt.figure(), master=self.root)
         self.canvas.get_tk_widget().pack()
@@ -83,6 +87,8 @@ class GUIApp:
                 self.output_text.insert(tk.END, '\n\n*** Top 3 Countries ***\n')
                 self.output_text.insert(tk.END, self.top_countries)
                 self.output_text.config(state=tk.DISABLED)
+        if self.fig is not None:
+            self.visualize_data(self.parsed_data)
 
     def generate_report(self):
         if hasattr(self, 'top_countries'):
@@ -133,6 +139,22 @@ class GUIApp:
             tk.messagebox.showerror(title='Error', message='No graph available to export.')
             print("Error: No graph available to export.")
 
+    def show_help(self):
+        try:
+            with open('help_doc.txt', 'r') as help_file:
+                help_text = help_file.read()
+
+            help_window = tk.Toplevel(self.root)
+            help_window.title("Help Documentation")
+            
+            help_text_widget = scrolledtext.ScrolledText(help_window, wrap=tk.WORD, width=80, height=30)
+            help_text_widget.pack(expand=True, fill='both')
+            help_text_widget.insert(tk.END, help_text)
+            help_text_widget.config(state=tk.DISABLED)
+
+        except FileNotFoundError:
+            tk.messagebox.showerror(title='Error', message='Help documentation not found.')
+
     def _quit(self):
         self.root.quit()
         self.root.destroy()
@@ -148,20 +170,28 @@ class PDF(FPDF):
         self.cell(0, 10, 'Page ' + str(self.page_no()), 0, 0, 'C')
 
 def generate_report(data):
-    pdf = PDF()
-    pdf.add_page()
+    if not data.empty and app.fig is not None:  # Check if top 3 countries data is not empty and graph is visualized
+        pdf = PDF()
+        pdf.add_page()
 
-    pdf.set_font('Arial', '', 12)
+        pdf.set_font('Arial', '', 12)
 
-    # add the data to the PDF
-    region_choice = app.region_combobox.get()# get user selected region
-    pdf.cell(0, 10, f'Region of vistors: {region_choice}', 0, 1)
+        # Add the data to the PDF
+        region_choice = app.region_combobox.get()  # Get user-selected region
+        pdf.cell(0, 10, f'Region of visitors: {region_choice}', 0, 1)
 
-    pdf.cell(0, 10, 'Number of visitors from top 3 countries within region:', 0, 1)
-    for country, visitors in data.items(): # loop through the data dictionary and add each country and number of visitors to the PDF
-        pdf.cell(0, 10, f'{country}: {visitors}', 0, 1)
+         # Save the graph in the PDF
+        graph_file_path = 'graph.png'
+        app.fig.savefig(graph_file_path)
+        pdf.image(graph_file_path, x=10, y=pdf.get_y() + 10, w=190)
+        pdf.ln(70)
+        pdf.cell(0, 10, 'Number of visitors from top 3 countries within region:', 0, 1)
+        for country, visitors in data.items():  # Loop through the data dictionary and add each country and the number of visitors to the PDF
+            pdf.cell(0, 10, f'{country}: {visitors}', 0, 1)
 
-    pdf.output('report.pdf')
+        pdf.output('report.pdf')
+    else:
+        tk.messagebox.showerror(title='Error', message='No graph or top 3 countries data available to generate a report.')
 
 if __name__ == '__main__':
     root = tk.Tk()

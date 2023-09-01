@@ -1,0 +1,82 @@
+-----------------------------------
+Visitors Analytics Help Documentation
+-----------------------------------
+
+Welcome to the Visitors Analytics application help documentation. This guide provides information on how to use the application effectively and make the most out of its features.
+
+Contents:
+1. Introduction
+2. Getting Started
+3. Data Analysis
+4. Data Visualization
+5. Exporting Data
+6. Generating Reports
+7. Troubleshooting
+
+-------------------------------
+1. Introduction
+-------------------------------
+
+The Visitors Analytics application is designed to analyze traveler trends and provide valuable insights based on data from different regions and time periods.
+
+-------------------------------
+2. Getting Started
+-------------------------------
+
+To get started with the application, follow these steps:
+
+- Select a year period from the "Select Year Period" dropdown.
+- Choose a region from the "Select Region" dropdown.
+- Check the "Get top 3 countries" checkbox if you want to see the top 3 countries in the selected region and time period.
+- Click the "Execute" button to perform data analysis.
+
+-------------------------------
+3. Data Analysis
+-------------------------------
+
+The application will load and analyze the data based on your selections. It will display information about the visitors in the selected region and time period. You can review the data in the output text area.
+
+-------------------------------
+4. Data Visualization
+-------------------------------
+
+You can visualize the data using the "Visualize Data" button. This will display a stacked bar chart showing visitor trends over the years. You can interact with the chart and zoom in for more detailed analysis.
+
+-------------------------------
+5. Exporting Data
+-------------------------------
+
+- To export the graph as an image, click the "Download graph" button. Choose a location and format (PNG) to save the graph.
+- To export the entire dataset or filtered data, click the "Generate Report" button. The report will be saved as a PDF file.
+
+-------------------------------
+6. Generating Reports
+-------------------------------
+
+The generated report includes:
+
+- Region of visitors: [Region Name]
+- Number of visitors from the top 3 countries within the region:
+  - [Country 1]: [Number of Visitors]
+  - [Country 2]: [Number of Visitors]
+  - [Country 3]: [Number of Visitors]
+
+-------------------------------
+7. Troubleshooting
+-------------------------------
+
+If you encounter any issues while using the application or have questions, please follow these steps:
+
+1. Check the application's "Help" menu or documentation for possible solutions to common issues.
+
+2. If the issue persists, visit our GitHub repository to check for existing bug reports and solutions:
+   - GitHub Repository: [https://github.com/DarrowWolf/TrendyTravellers]
+
+3. If you can't find a solution, you can create a new issue on GitHub to report the problem:
+   - Click the "Issues" tab on our GitHub repository.
+   - Click the "New Issue" button.
+   - Provide a detailed description of the issue you're facing, including any error messages.
+   - Attach screenshots or additional information if necessary.
+   - Click "Submit" to create the issue.
+
+Our development team will review your issue and provide assistance as soon as possible.
