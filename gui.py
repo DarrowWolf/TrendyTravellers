@@ -7,41 +7,16 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from main import VisitorsAnalyticsUtils, DataLoader
 from fpdf import FPDF
 
-class PDF(FPDF):
-    def header(self):
-        self.set_font('Arial', 'B', 12)
-        self.cell(0, 10, 'Visitors Analytics Report', 0, 1, 'C')
-
-    def footer(self):
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'Page ' + str(self.page_no()), 0, 0, 'C')
-
-def generate_report(data):
-    pdf = PDF()
-    pdf.add_page()
-
-    pdf.set_font('Arial', '', 12)
-
-    # add the data to the PDF
-    region_choice = app.region_combobox.get()# get user selected region
-    pdf.cell(0, 10, f'Region of vistors: {region_choice}', 0, 1)
-
-    pdf.cell(0, 10, 'Number of visitors from top 3 countries within region:', 0, 1)
-    for country, visitors in data.items():
-        pdf.cell(0, 10, f'{country}: {visitors}', 0, 1)
-
-    pdf.output('report.pdf')
 
 class GUIApp:
     def __init__(self, root):
-        self.root = root
-        self.root.title("Visitors Analytics")
-        self.create_widgets()
-        self.data_loader = DataLoader()
-        self.utils = VisitorsAnalyticsUtils()
-        self.fig = None
-        self.root.protocol("WM_DELETE_WINDOW", self._quit)
+        self.root = root # root is the main window
+        self.root.title("Visitors Analytics") # set the title of the window
+        self.create_widgets() # call the create_widgets function
+        self.data_loader = DataLoader() # create an instance of the DataLoader class
+        self.utils = VisitorsAnalyticsUtils() # create an instance of the VisitorsAnalyticsUtils class
+        self.fig = None # create a placeholder for the Matplotlib figure
+        self.root.protocol("WM_DELETE_WINDOW", self._quit) # handle the closing of the window
     
     def create_widgets(self):
         year_label = tk.Label(self.root, text="Select Year Period:")
@@ -148,9 +123,9 @@ class GUIApp:
             tk.messagebox.showerror(title='Error', message='No data available for visualization.')
             print("Error: No data available for visualization.")
 
-    def export_graph(self):
+    def export_graph(self): 
         if self.fig is not None:
-            file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG Files", "*.png"), ("All Files", "*.*")])
+            file_path = filedialog.asksaveasfilename(initialfile= "graph", defaultextension=".png", filetypes=[("PNG Files", "*.png"), ("All Files", "*.*")])
 
             if file_path:
                 self.fig.savefig(file_path)
@@ -161,6 +136,32 @@ class GUIApp:
     def _quit(self):
         self.root.quit()
         self.root.destroy()
+
+class PDF(FPDF):
+    def header(self):
+        self.set_font('Arial', 'B', 12)
+        self.cell(0, 10, 'Visitors Analytics Report', 0, 1, 'C')
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.cell(0, 10, 'Page ' + str(self.page_no()), 0, 0, 'C')
+
+def generate_report(data):
+    pdf = PDF()
+    pdf.add_page()
+
+    pdf.set_font('Arial', '', 12)
+
+    # add the data to the PDF
+    region_choice = app.region_combobox.get()# get user selected region
+    pdf.cell(0, 10, f'Region of vistors: {region_choice}', 0, 1)
+
+    pdf.cell(0, 10, 'Number of visitors from top 3 countries within region:', 0, 1)
+    for country, visitors in data.items(): # loop through the data dictionary and add each country and number of visitors to the PDF
+        pdf.cell(0, 10, f'{country}: {visitors}', 0, 1)
+
+    pdf.output('report.pdf')
 
 if __name__ == '__main__':
     root = tk.Tk()
