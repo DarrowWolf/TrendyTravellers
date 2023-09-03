@@ -76,9 +76,9 @@ class GUIApp:
             region_mapping = {"Asia": 1, "Europe": 2, "Others": 3}
             self.parsed_data = self.data_loader.parseData(year_mapping[year_choice], region_mapping[region_choice])
 
-            self.output_text.config(state=tk.NORMAL)
-            self.output_text.delete(1.0, tk.END)
-            self.output_text.insert(tk.END, self.parsed_data)
+            self.output_text.config(state=tk.NORMAL) # Enable the output text widget
+            self.output_text.delete(1.0, tk.END) # Clear the output text widget
+            self.output_text.insert(tk.END, self.parsed_data) # Insert the parsed data into the output text widget
             self.output_text.config(state=tk.DISABLED)
 
             top_three_countries_checked = self.top_three_countries_checked.get()
@@ -88,14 +88,9 @@ class GUIApp:
                 self.output_text.insert(tk.END, '\n\n*** Top 3 Countries ***\n')
                 self.output_text.insert(tk.END, self.top_countries)
                 self.output_text.config(state=tk.DISABLED)
+        # If the user has already visualized the data, redraw the graph
         if self.fig is not None:
             self.visualize_data(self.parsed_data)
-
-    def generate_report(self):
-        if hasattr(self, 'top_countries'):
-            generate_report(self.top_countries, self.fig, self.original_fig_size)
-        else:
-            tk.messagebox.showerror(title='Error', message='Please execute the program first to get the top 3 countries.')
 
     def visualize_data(self, parsed_data=None):
         if parsed_data is None:
@@ -105,7 +100,7 @@ class GUIApp:
             if year_choice and region_choice:
                 year_mapping = {"1978-1987": 1, "1988-1997": 2, "1998-2007": 3, "2008-2017": 4}
                 region_mapping = {"Asia": 1, "Europe": 2, "Others": 3}
-                parsed_data = self.data_loader.parseData(year_mapping[year_choice], region_mapping[region_choice])
+                parsed_data = self.data_loader.parseData(year_mapping[year_choice], region_mapping[region_choice]) # calls the parseData function and passes year_choice and region_choice as parameters
 
         if parsed_data is not None:
             parsed_data = parsed_data.drop_duplicates(subset=['year'], keep='first')
@@ -144,6 +139,39 @@ class GUIApp:
         else:
             tk.messagebox.showerror(title='Error', message='No graph available to export.')
 
+    def generate_report(self):
+        if hasattr(self, 'top_countries') and self.fig is not None:
+            pdf = PDF()
+            pdf.add_page()
+
+            pdf.set_font('Arial', '', 12)
+
+            # Add the data to the PDF
+            region_choice = self.region_combobox.get()  # Get user-selected region
+            pdf.cell(0, 10, f'Region of visitors: {region_choice}', 0, 1)
+
+            # Save the original size of the graph to a temporary file
+            original_fig_file_path = 'graph.png'
+            self.fig.set_size_inches(self.original_fig_size)
+            self.fig.savefig(original_fig_file_path)
+
+            # Add the original size graph from the image file to the PDF
+            pdf.image(original_fig_file_path, x=10, y=pdf.get_y() + 10, w=190)
+            pdf.ln(110)
+
+            # Add the top 3 countries data to the PDF
+            pdf.cell(0, 10, 'Number of visitors from top 3 countries within region:', 0, 1)
+            for country, visitors in self.top_countries.items():
+                pdf.cell(0, 10, f'{country}: {visitors}', 0, 1)
+
+            # Output the PDF
+            pdf.output('report.pdf', 'F')
+
+            # Clear the Matplotlib figure after saving it as an image
+            plt.close(self.fig)
+
+        else:
+            tk.messagebox.showerror(title='Error', message='No graph or top 3 countries data available to generate a report.')
 
     def show_help(self):
         try:
@@ -174,41 +202,6 @@ class PDF(FPDF):
         self.set_y(-15)
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, 'Page ' + str(self.page_no()), 0, 0, 'C')
-
-def generate_report(data, fig, original_fig_size):
-    if not data.empty and fig is not None:
-        pdf = PDF()
-        pdf.add_page()
-
-        pdf.set_font('Arial', '', 12)
-
-        # Add the data to the PDF 
-        region_choice = app.region_combobox.get()  # Get user-selected region
-        pdf.cell(0, 10, f'Region of visitors: {region_choice}', 0, 1)
-
-        # Save the original size of the graph to a temporary file
-        original_fig_file_path = 'graph.png'
-        fig.set_size_inches(original_fig_size)
-        fig.savefig(original_fig_file_path)
-
-        # Add the original size graph from the image file to the PDF
-        pdf.image(original_fig_file_path, x=10, y=pdf.get_y() + 10, w=190)
-        pdf.ln(110)
-
-        # Add the top 3 countries data to the PDF
-        pdf.cell(0, 10, 'Number of visitors from top 3 countries within region:', 0, 1)
-        for country, visitors in data.items():
-            pdf.cell(0, 10, f'{country}: {visitors}', 0, 1)
-
-        # Output the PDF
-        pdf.output('report.pdf', 'F')
-
-        # Clear the Matplotlib figure after saving it as an image
-        plt.close(fig)
-
-    else:
-        tk.messagebox.showerror(title='Error', message='No graph or top 3 countries data available to generate a report.')
-
 
 
 if __name__ == '__main__':
