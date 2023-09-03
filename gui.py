@@ -10,13 +10,14 @@ from fpdf import FPDF
 
 class GUIApp:
     def __init__(self, root):
-        self.root = root # root is the main window
-        self.root.title("Visitors Analytics") # set the title of the window
-        self.create_widgets() # call the create_widgets function
-        self.data_loader = DataLoader() # create an instance of the DataLoader class
-        self.utils = VisitorsAnalyticsUtils() # create an instance of the VisitorsAnalyticsUtils class
-        self.fig = None # create a placeholder for the Matplotlib figure
-        self.root.protocol("WM_DELETE_WINDOW", self._quit) # handle the closing of the window
+        self.root = root  # root is the main window
+        self.root.title("Visitors Analytics")  # set the title of the window
+        self.create_widgets()  # call the create_widgets function
+        self.data_loader = DataLoader()  # create an instance of the DataLoader class
+        self.utils = VisitorsAnalyticsUtils()  # create an instance of the VisitorsAnalyticsUtils class
+        self.fig = None  # create a placeholder for the Matplotlib figure
+        self.original_fig_size = (12, 6)  # Store the original size of the graph
+        self.root.protocol("WM_DELETE_WINDOW", self._quit)  # handle the closing of the window
     
     def create_widgets(self):
         year_label = tk.Label(self.root, text="Select Year Period:")
@@ -92,7 +93,7 @@ class GUIApp:
 
     def generate_report(self):
         if hasattr(self, 'top_countries'):
-            generate_report(self.top_countries)
+            generate_report(self.top_countries, self.fig, self.original_fig_size)
         else:
             tk.messagebox.showerror(title='Error', message='Please execute the program first to get the top 3 countries.')
 
@@ -112,14 +113,14 @@ class GUIApp:
 
             if self.fig is not None:
                 plt.close(self.fig)
-            self.fig = plt.figure(figsize=(12, 6))
+            self.fig = plt.figure(figsize=self.original_fig_size)  # Use the original size of the graph
             ax = transposed_data.plot(kind='bar', stacked=True, ax=self.fig.gca())
             plt.xlabel("Countries")
             plt.ylabel("Number of Visitors")
             plt.title(f"Visitor Trends by Country in the Selected Region")
             plt.xticks(rotation=45)
 
-            ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title = 'Years')
+            ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title='Years')
             plt.tight_layout()
 
             self.canvas.get_tk_widget().pack_forget()
@@ -129,15 +130,20 @@ class GUIApp:
             tk.messagebox.showerror(title='Error', message='No data available for visualization.')
             print("Error: No data available for visualization.")
 
-    def export_graph(self): 
+    def export_graph(self):
         if self.fig is not None:
-            file_path = filedialog.asksaveasfilename(initialfile= "graph", defaultextension=".png", filetypes=[("PNG Files", "*.png"), ("All Files", "*.*")])
+            file_path = filedialog.asksaveasfilename(initialfile="graph", defaultextension=".png",filetypes=[("PNG Files", "*.png"), ("All Files", "*.*")])
 
             if file_path:
+
+                self.fig.set_size_inches(12, 6)
                 self.fig.savefig(file_path)
+
+                # Display a success message
+                tk.messagebox.showinfo(title='Success', message='Graph downloaded successfully.')
         else:
             tk.messagebox.showerror(title='Error', message='No graph available to export.')
-            print("Error: No graph available to export.")
+
 
     def show_help(self):
         try:
@@ -169,29 +175,41 @@ class PDF(FPDF):
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, 'Page ' + str(self.page_no()), 0, 0, 'C')
 
-def generate_report(data):
-    if not data.empty and app.fig is not None:  # Check if top 3 countries data is not empty and graph is visualized
+def generate_report(data, fig, original_fig_size):
+    if not data.empty and fig is not None:
         pdf = PDF()
         pdf.add_page()
 
         pdf.set_font('Arial', '', 12)
 
-        # Add the data to the PDF
+        # Add the data to the PDF 
         region_choice = app.region_combobox.get()  # Get user-selected region
         pdf.cell(0, 10, f'Region of visitors: {region_choice}', 0, 1)
 
-         # Save the graph in the PDF
-        graph_file_path = 'graph.png'
-        app.fig.savefig(graph_file_path)
-        pdf.image(graph_file_path, x=10, y=pdf.get_y() + 10, w=190)
-        pdf.ln(70)
+        # Save the original size of the graph to a temporary file
+        original_fig_file_path = 'graph.png'
+        fig.set_size_inches(original_fig_size)
+        fig.savefig(original_fig_file_path)
+
+        # Add the original size graph from the image file to the PDF
+        pdf.image(original_fig_file_path, x=10, y=pdf.get_y() + 10, w=190)
+        pdf.ln(110)
+
+        # Add the top 3 countries data to the PDF
         pdf.cell(0, 10, 'Number of visitors from top 3 countries within region:', 0, 1)
-        for country, visitors in data.items():  # Loop through the data dictionary and add each country and the number of visitors to the PDF
+        for country, visitors in data.items():
             pdf.cell(0, 10, f'{country}: {visitors}', 0, 1)
 
-        pdf.output('report.pdf')
+        # Output the PDF
+        pdf.output('report.pdf', 'F')
+
+        # Clear the Matplotlib figure after saving it as an image
+        plt.close(fig)
+
     else:
         tk.messagebox.showerror(title='Error', message='No graph or top 3 countries data available to generate a report.')
+
+
 
 if __name__ == '__main__':
     root = tk.Tk()
