@@ -1,5 +1,7 @@
 # TrendyTravellers - Travelers' Trend Analysis
 
+*THIS IS A SCHOOL PROJECT FOR OUR IT43002FP PROGRAMMING ESSENTIALS MOD*
+
 DataMax Pte Ltd has partnered with ExpenseTrack Pte Ltd to develop an application for travelers' trend analysis. The goal of this project is to identify the top 3 countries of visitors to Singapore from specific regions over a span of 10 years. Python is chosen as the primary programming language for this data analysis project.
 
 ## Table of Contents
@@ -34,6 +36,7 @@ Before running the application, ensure you have the following prerequisites inst
 - Pandas
 - Matplotlib
 - Tkinter (for GUI)
+- FPDF
 
 ### Installation
 
